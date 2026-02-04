@@ -1,23 +1,32 @@
 import os
-import time
-from telegram import Bot
+from telegram import Update
+from telegram.ext import Application, CommandHandler, ContextTypes
 
 TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
 
-bot = Bot(token=TOKEN)
+bot_enabled = False
 
-def send_signal():
-    text = (
-        "📊 SIGNAL\n\n"
-        "Pair: EUR/USD OTC\n"
-        "Direction: ⬆️ BUY\n"
-        "Timeframe: 30 sec\n\n"
-        "⚡️ Automated signal"
-    )
-    bot.send_message(chat_id=CHAT_ID, text=text)
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    global bot_enabled
+    bot_enabled = True
+    await update.message.reply_text("▶️ Bot started")
+
+
+async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    global bot_enabled
+    bot_enabled = False
+    await update.message.reply_text("⏹ Bot stopped")
+
+
+def main():
+    app = Application.builder().token(TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("stop", stop))
+
+    app.run_polling()
+
 
 if __name__ == "__main__":
-    while True:
-        send_signal()
-        time.sleep(180)  # каждые 3 минуты
+    main()
