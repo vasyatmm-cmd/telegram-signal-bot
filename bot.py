@@ -1,6 +1,6 @@
-from flask import Flask, request  # Лишняя строка!
-import telebot                    # Лишняя строка! (этот модуль не нужен)
-from flask import Flask, request, jsonify  # Правильно
+from flask import Flask, request, jsonify
+import requests
+import os
 
 app = Flask(__name__)
 
